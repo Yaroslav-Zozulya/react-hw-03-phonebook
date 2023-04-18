@@ -2,6 +2,7 @@ import ContactForm from './ContactForm/ContactForm';
 import ContactsList from './ContactsList/ContactsList';
 import { nanoid } from 'nanoid';
 import { Component } from 'react';
+import Filter from './Filter/Filter';
 
 export class App extends Component {
   state = {
@@ -44,11 +45,10 @@ export class App extends Component {
   };
 
   deleteContact = e => {
-    this.setState(state => {
-      return {
-        ...state,
-        contacts: state.contacts.filter(contact => contact.id !== e.target.id),
-      };
+    this.setState({
+      contacts: this.state.contacts.filter(
+        contact => contact.id !== e.target.id
+      ),
     });
   };
 
@@ -64,12 +64,10 @@ export class App extends Component {
     );
     return (
       <>
-        <h3>Phonebook</h3>
+        <h1>Phonebook</h1>
         <ContactForm values={this.state} addContact={this.addContact} />
-        <h3>Contacts</h3>
-
-        <p>Find contacts by name</p>
-        <input type="text" name="search" onChange={this.handleSearchInput} />
+        <h2>Contacts</h2>
+        <Filter handleSearchInput={this.handleSearchInput} />
         <ContactsList
           filteredContacts={filteredContacts}
           deleteContact={this.deleteContact}
