@@ -1,26 +1,30 @@
+import localStorageAPI from './localStorageAPI';
+import { Component } from 'react';
+import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm/ContactForm';
 import ContactsList from './ContactsList/ContactsList';
-import { nanoid } from 'nanoid';
-import { Component } from 'react';
 import Filter from './Filter/Filter';
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
-    name: '',
-    number: '',
   };
 
   checkContacts = name =>
     this.state.contacts.find(
       contact => contact.name.toLowerCase().trim() === name.toLowerCase().trim()
     );
+
+  componentDidMount() {
+    this.setState({
+      contacts: localStorageAPI.getContacts(),
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    localStorageAPI.addContact(this.state.contacts);
+  }
 
   addContact = (values, actions) => {
     const { name, number } = values;
@@ -58,7 +62,7 @@ export class App extends Component {
 
   render() {
     const { contacts, filter } = this.state;
-
+    const isContacts = contacts.length !== 0;
     const filteredContacts = contacts.filter(contact =>
       contact.name.toLocaleLowerCase().includes(filter)
     );
@@ -66,12 +70,16 @@ export class App extends Component {
       <>
         <h1>Phonebook</h1>
         <ContactForm values={this.state} addContact={this.addContact} />
-        <h2>Contacts</h2>
-        <Filter handleSearchInput={this.handleSearchInput} />
-        <ContactsList
-          filteredContacts={filteredContacts}
-          deleteContact={this.deleteContact}
-        />
+        {isContacts && (
+          <>
+            <h2>Contacts</h2>
+            <Filter handleSearchInput={this.handleSearchInput} />
+            <ContactsList
+              filteredContacts={filteredContacts}
+              deleteContact={this.deleteContact}
+            />
+          </>
+        )}
       </>
     );
   }
