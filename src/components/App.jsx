@@ -22,7 +22,7 @@ export class App extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     localStorageAPI.addContact(this.state.contacts);
   }
 
